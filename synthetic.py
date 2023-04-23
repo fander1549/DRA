@@ -112,7 +112,7 @@ for ts in range(st, ed):
             trained = True
 
         #输出异常得分
-        score_r[ts,:] = model_r.decision_function(x_r).flatten()#score_r = 2016*148
+        score_r[ts,:] = model_r.decision_function(x_r).flatten()#score_r = 2016*148 score_r = np.zeros((nT, nR)) + 100
         score_int[ts,:] = model_int.decision_function(x_int).flatten()#2016*148
         #7104
         argsort_r = score_r[(ts-60*24//MPS+1):(ts+1),:].flatten().argsort()#148*48 1day*148zones  一天的异常数

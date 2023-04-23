@@ -18,7 +18,7 @@ dists = np.loadtxt(dataRoot2 + "dists.txt")  # pairwise distance between regions
 
 # scale down the data for calculating pearson correlation 
 data = data / 100
-
+#123120391-2093-102931-203
 nR = 148  # number of regions
 nS = 2  # number of data sources
 MPS = 30  # minutes per time slot, must divides 1440 (minutes of day)

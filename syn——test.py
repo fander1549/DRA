@@ -73,7 +73,7 @@ ed = 60 * 24 * 7 * nWeek // MPS
 st = max(detect_st - tsTrain, lCorr)
 
 trained = False
-
+#qwe
 c=0
 d=0
 a=0
