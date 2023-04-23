@@ -6,7 +6,7 @@ from util import *
 
 #dataRoot = 'path_for_data'
 dataRoot1 = 'E:/data/ubicomp2018/release/nyc/'
-dataRoot2 = 'C:/Users/fander/Desktop/DRA/release/nyc/'
+dataRoot2 = 'C:/Users/fander/Desktop/project/release/nyc/'
 data = np.loadtxt(dataRoot2 + 'taxibike.txt')#(351days*48times)*(4*862zones)
 dists = np.loadtxt(dataRoot2 + 'dists.txt')#862*862
 
@@ -68,16 +68,18 @@ for ts in range(st, ed):
     pp_tmp = np.array(pp)
     pp_tmp[np.where(pp < corrThres)] = 0#排除相似度低的区域，将计算局限在相似度高的区域集合中
 
+# np.nan_to_num(np.sum(pp_tmp * pp_diff, axis=1) / np.sum(pp_tmp, axis=1))
+
     # 计算异常得分
     scaledData = ((data[:(ts+1),:] - data[:(ts+1),:].mean(0)) / data[:(ts+1),:].std(0))[-1]
     weightedAvg = np.nan_to_num(np.sum(pp_tmp * np.tile(scaledData, (scaledData.shape[0], 1)), axis = 1) / np.sum(pp_tmp, axis=1))
     sign = ((scaledData > weightedAvg).astype(int) - 0.5) * 2
     score_ind[ts,:] = sign * np.nan_to_num(np.sum(pp_tmp * pp_diff, axis=1) / np.sum(pp_tmp, axis=1))#
     
-    tmpX = (mNearTile * score_ind[(ts-t_delta+1):(ts+1),:].ravel()).reshape((-1, nR)).sum(axis=1)
+    tmpX = (mNearTile * score_ind[(ts-t_delta+1):(ts+1),:].ravel()).reshape((-1, nR)).sum(axis=1) #t_delta=2
     tmpX = np.nan_to_num(tmpX / sMNear)
     tmpX = tmpX.reshape(nNearPart, nR, t_delta, nS).transpose([1,2,0,3]).reshape((nR, -1))
-    tmpX = np.c_[tmpX[:,-nS*nNearPart:], tmpX[:,:-nS*nNearPart].reshape((nR,t_delta-1,nNearPart,nS))[:,:,0,:].reshape((nR,-1))]
+    tmpX = np.c_[                     tmpX[:,-nS*nNearPart:],                      tmpX[:,:-nS*nNearPart].reshape((nR,t_delta-1,nNearPart,nS))[:,:,0,:].reshape((nR,-1))]
     x_r = np.array(tmpX[:,0:nS])
     x_int = np.array(tmpX)
     
