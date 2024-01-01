@@ -53,6 +53,7 @@ st = max(detect_st - tsTrain, lCorr)
 
 
 trained = False
+#使用七天的来训练
 p1 = np.einsum('ij,ik->kj', data[(st-lCorr):st,:], data[(st-lCorr):st,:])# 336*3448矩阵点积3448*3448
 for ts in range(st, ed):
     print('\r' + str(ts), end='')
@@ -77,11 +78,12 @@ for ts in range(st, ed):
     weightedAvg = np.nan_to_num(np.sum(pp_tmp * np.tile(scaledData, (scaledData.shape[0], 1)), axis = 1) / np.sum(pp_tmp, axis=1))
     sign = ((scaledData > weightedAvg).astype(int) - 0.5) * 2
     score_ind[ts,:] = sign * np.nan_to_num(np.sum(pp_tmp * pp_diff, axis=1) / np.sum(pp_tmp, axis=1))#
-    
+    #tmpX=862*12
     tmpX = (mNearTile * score_ind[(ts-t_delta+1):(ts+1),:].ravel()).reshape((-1, nR)).sum(axis=1) #t_delta=2
     tmpX = np.nan_to_num(tmpX / sMNear)
     tmpX = tmpX.reshape(nNearPart, nR, t_delta, nS).transpose([1,2,0,3]).reshape((nR, -1))
     tmpX = np.c_[                     tmpX[:,-nS*nNearPart:],                      tmpX[:,:-nS*nNearPart].reshape((nR,t_delta-1,nNearPart,nS))[:,:,0,:].reshape((nR,-1))]
+    # tmpX=862*12
     x_r = np.array(tmpX[:,0:nS])
     x_int = np.array(tmpX)
     
@@ -102,7 +104,7 @@ for ts in range(st, ed):
         
         selected_int = argsort_int[np.where(np.in1d(argsort_int, argsort_r[0:nDailyAnomaly_r]))[0]][0:nDailyAnomaly_int]#int如果在候选区内r 则参与排序
         print (selected_int)
-        iAnomalies = selected_int[(selected_int // nR) == (60 * 24 // MPS - 1)] % nR  #第几个区域
+        iAnomalies = selected_int[(selected_int // nR) == (60 * 24 // MPS - 1)] % nR  #第几个区域，要的是这24小时中的最后一个time_slot
         iAnomalies = iAnomalies[score_int[ts,iAnomalies] != 100]
         anomalies[ts,iAnomalies] = 1 #16848*862
 
