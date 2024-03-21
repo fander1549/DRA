@@ -63,7 +63,7 @@ p1 = np.einsum('ij,ik->kj', data[(st-lCorr):st,:], data[(st-lCorr):st,:])# 336*3
 
 for ts in range(st, ed):
     print('\r' + str(ts), end='')
-
+    #好is和
     # 更新皮尔逊相关系数
     pp = np.nan_to_num(pairPearson(data[(ts-lCorr):ts,:], data[(ts-lCorr):ts,:], p1))#把一个区域看做一个变量，统计一个区域（变量）内336个time_slot与其他变量的相关性
     p1 = p1 + data[ts,:] * data[ts,:][:,None]#* 代表矩阵乘法1*3448  3448*1   [:,None]代表行向量变成列向量
